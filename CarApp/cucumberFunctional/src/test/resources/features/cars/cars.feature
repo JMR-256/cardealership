@@ -7,3 +7,11 @@ Feature: Adding a car to the database
     When I POST to the '/cars/admin/' endpoint
     Then the client receives status code of 201
     And the JSON should contain the key 'description' with value 'Database updated'
+
+  Scenario: POST a car using the /car/admin endpoint with malformed attribute
+    Given I want to add the following car with JSON '[{brand: "BMW","model": "X5","year": 2022, "price": 80000, "mileage": 10000, "colour": "space grey"}]'
+    When I POST to the '/cars/admin' endpoint
+    Then the client receives status code of 400
+    And the JSON should contain the key 'description' with value 'Incorrect car data provided'
+
+

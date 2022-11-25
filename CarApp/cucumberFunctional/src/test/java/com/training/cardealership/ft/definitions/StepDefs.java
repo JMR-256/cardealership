@@ -56,4 +56,9 @@ public class StepDefs {
         Assertions.assertTrue(responseData.containsKey(expectedKey));
         Assertions.assertEquals(expectedValue, responseData.get(expectedKey));
     }
+
+    @Given("I want to add the following car with JSON {string}")
+    public void iWantToAddTheFollowingCarWithJSONBrand(String carJSON) {
+        request = given().contentType(ContentType.JSON).body(carJSON);
+    }
 }
