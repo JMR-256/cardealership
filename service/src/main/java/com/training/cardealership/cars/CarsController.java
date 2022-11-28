@@ -30,7 +30,7 @@ public class CarsController {
     }
 
     @GetMapping("/admin")
-    public ResponseEntity<List<CarDTO>> getCars() {
-        return ResponseEntity.ok(carsService.getCars());
+    public ResponseEntity<List<CarDTO>> getCars(@RequestParam Map<String, String> queryParams) {
+        return ResponseEntity.ok(carsService.getCars(queryParams));
     }
 }

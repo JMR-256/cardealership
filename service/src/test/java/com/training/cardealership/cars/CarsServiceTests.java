@@ -7,11 +7,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.mongodb.core.query.Query;
 
 import javax.validation.ConstraintViolationException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
@@ -48,10 +54,18 @@ public class CarsServiceTests {
         Assertions.assertThrows(CarExistsException.class, () ->carsService.addCar(List.of(EXAMPLE_CAR_DTO, EXAMPLE_CAR_DTO)));
     }
     @Test
-    void findCars_calls_repo_findAll() {
+    void findCars_calls_repo_findAll_whenParamsEmpty() {
     Mockito.when(carsRepository.findAll()).thenReturn(List.of(EXAMPLE_CAR));
-     List<CarDTO> responseCars = carsService.getCars();
+     List<CarDTO> responseCars = carsService.getCars(new HashMap<>());
      Assertions.assertEquals(List.of(EXAMPLE_CAR_DTO), responseCars);
      Mockito.verify(carsRepository, times(1)).findAll();
+    }
+
+    @Test
+    void findCars_calls_repo_findByQuery_whenParamsNotEmpty() {
+        Mockito.when(carsRepository.findByQuery(eq("BMW"), any(), any(), any(), any(), any())).thenReturn(List.of(EXAMPLE_CAR));
+        List<CarDTO> responseCars = carsService.getCars(Map.of("brand", "BMW"));
+        Assertions.assertEquals(List.of(EXAMPLE_CAR_DTO), responseCars);
+        Mockito.verify(carsRepository, times(1)).findByQuery(eq("BMW"), any(), any(), any(), any(), any());
     }
 }
