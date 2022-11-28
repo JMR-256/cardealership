@@ -23,7 +23,7 @@ public class CarsService {
 
     public void addCar(List<CarDTO> cars) {
             cars.stream().map(this::mapToEntity).forEach(car -> {
-                if (carsRepository.existsByBrandAndModel(car.getBrand(), car.getModel())) {
+                if (carsRepository.existsByBrandIgnoreCaseAndModelIgnoreCase(car.getBrand(), car.getModel())) {
                     throw new CarExistsException();
                 }
                 carsRepository.save(car);

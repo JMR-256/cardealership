@@ -6,5 +6,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.List;
 
 public interface CarsRepository extends MongoRepository<Car, String> {
-    boolean existsByBrandAndModel(String brand, String model);
+    boolean existsByBrandIgnoreCaseAndModelIgnoreCase(String brand, String model);
 }

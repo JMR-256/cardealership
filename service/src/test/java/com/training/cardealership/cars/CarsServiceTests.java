@@ -44,7 +44,7 @@ public class CarsServiceTests {
     @Test
     void throws_correct_exception_when_duplicate_car_exists() {
         CarDTO carDTO = new CarDTO("BMW", "X5", 80000, 2022, 10000, "Space Grey");
-        Mockito.when(carsRepository.existsByBrandAndModel(carDTO.getBrand(), carDTO.getModel())).thenReturn(false).thenReturn(true);
+        Mockito.when(carsRepository.existsByBrandIgnoreCaseAndModelIgnoreCase(carDTO.getBrand(), carDTO.getModel())).thenReturn(false).thenReturn(true);
 
         Assertions.assertThrows(CarExistsException.class, () ->carsService.addCar(List.of(carDTO, carDTO)));
     }

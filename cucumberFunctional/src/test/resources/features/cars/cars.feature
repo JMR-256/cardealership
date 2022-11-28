@@ -74,3 +74,14 @@ Feature: Adding a car to the database
     Then the client receives status code of 409
     And the JSON should contain the key 'description' with value 'Car already exists'
 
+  Scenario: Post a car using the /cars/admin endpoint which already exists
+    Given The following car exists in the database
+      | brand | model | price | year | mileage | colour |
+      | BMW   | X5    | 80000 | 2022 | 10000   | Space Grey |
+    And I want to add the following car
+      | brand | model | price | year | mileage | colour |
+      | bmw   | x5    | 80000 | 2022 | 10000   | Space Grey |
+    When I POST to the '/cars/admin/' endpoint
+    Then the client receives status code of 409
+    And the JSON should contain the key 'description' with value 'Car already exists'
+
