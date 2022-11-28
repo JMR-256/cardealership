@@ -38,4 +38,20 @@ Feature: Adding a car to the database
     Then the client receives status code of 400
     And the JSON should contain the key 'description' with value 'Incorrect car data provided'
 
+  Scenario: POST a car using the /cars/admin endpoint with a year length of 3
+    Given  I want to add the following car
+      | brand | model | price | year | mileage | colour
+      |  BMW  | X5    | 80000 | 202 | 10000   | Space Grey
+    When I POST to the '/cars/admin' endpoint
+    Then the client receives status code of 400
+    And the JSON should contain the key 'description' with value 'Incorrect car data provided'
+
+  Scenario: POST a car using the /cars/admin endpoint with a year length of 5
+    Given  I want to add the following car
+      | brand | model | price | year | mileage | colour
+      |  BMW  | X5    | 80000 | 20222 | 10000   | Space Grey
+    When I POST to the '/cars/admin' endpoint
+    Then the client receives status code of 400
+    And the JSON should contain the key 'description' with value 'Incorrect car data provided'
+
 
