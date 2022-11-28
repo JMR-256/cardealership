@@ -29,7 +29,6 @@ public class CarsController {
     @PostMapping("/admin")
     public ResponseEntity<Map<String, String>> addCar(@RequestBody List< @Valid CarDTO> cars) {
         carsService.addCar(cars);
-        System.out.println(cars.get(0).getMileage());
         return new ResponseEntity<>(Map.of("description", "Database updated"), HttpStatus.CREATED);
     }
 }
