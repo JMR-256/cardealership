@@ -2,6 +2,7 @@ package com.training.cardealership.ft.definitions;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.cucumber.java.DataTableType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -60,5 +61,10 @@ public class StepDefs {
     @Given("I want to add the following car with JSON {string}")
     public void iWantToAddTheFollowingCarWithJSONBrand(String carJSON) {
         request = given().contentType(ContentType.JSON).body(carJSON);
+    }
+
+    @DataTableType(replaceWithEmptyString = "[blank]")
+    public String stringType(String cell) {
+        return cell;
     }
 }
