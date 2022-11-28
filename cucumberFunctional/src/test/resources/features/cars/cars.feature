@@ -64,7 +64,7 @@ Feature: Adding a car to the database
       And the JSON should contain the key 'description' with value 'Car already exists'
 
   Scenario: Post a car using the /cars/admin endpoint which already exists
-    Given The following car exists in the database
+    Given The following cars exists in the database
       | brand | model | price | year | mileage | colour |
       | BMW   | X5    | 80000 | 2022 | 10000   | Space Grey |
     And I want to add the following car
@@ -75,7 +75,7 @@ Feature: Adding a car to the database
     And the JSON should contain the key 'description' with value 'Car already exists'
 
   Scenario: Post a car using the /cars/admin endpoint which already exists
-    Given The following car exists in the database
+    Given The following cars exists in the database
       | brand | model | price | year | mileage | colour |
       | BMW   | X5    | 80000 | 2022 | 10000   | Space Grey |
     And I want to add the following car

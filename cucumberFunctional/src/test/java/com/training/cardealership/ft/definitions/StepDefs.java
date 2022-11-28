@@ -13,8 +13,10 @@ import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.Assertions;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
@@ -47,7 +49,7 @@ public class StepDefs {
         request = given().contentType(ContentType.JSON).body(json);
     }
 
-    @Given("The following car exists in the database")
+    @Given("The following cars exists in the database")
     public void theFollowingCarHasBeenPostedToTheCarsAdminEndpoint(List<Map<String, String>> table) throws JsonProcessingException {
         i_want_to_add_the_following_car(table);
         request.post(ENDPOINTS.get("POST_CAR"));
@@ -56,6 +58,11 @@ public class StepDefs {
     @When("I POST to the {string} endpoint")
     public void i_post_to_the_endpoint(String endpoint) {
         response = request.post(endpoint);
+    }
+
+    @When("the client GETs the endpoint {string}")
+    public void clientGetEndpoint(String endpoint) {
+        response = given().get(endpoint);
     }
 
 
@@ -74,5 +81,11 @@ public class StepDefs {
     @DataTableType(replaceWithEmptyString = "[blank]")
     public String stringType(String cell) {
         return cell;
+    }
+
+    @And("the client receives response JSON containing")
+    public void checkResponseJson(List<Map<String, String>> expectedResult) {
+        Set<Map<String, String>> parsedResponse = response.as(new TypeRef<Set<Map<String, String>>>(){});
+        Assertions.assertEquals(new HashSet<>(expectedResult), parsedResponse);
     }
 }
