@@ -1,5 +1,6 @@
 package com.training.cardealership.cars;
 
+import com.training.cardealership.exceptions.CarExistsException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,5 +39,13 @@ public class CarsServiceTests {
         List<CarDTO> cars = List.of(carDTO);
         Assertions.assertThrows(ConstraintViolationException.class, () ->carsService.addCar(cars));
         Mockito.verify(carsRepository, times(1)).save(car);
+    }
+
+    @Test
+    void throws_correct_exception_when_duplicate_car_exists() {
+        CarDTO carDTO = new CarDTO("BMW", "X5", 80000, 2022, 10000, "Space Grey");
+        Mockito.when(carsRepository.existsByBrandAndModel(carDTO.getBrand(), carDTO.getModel())).thenReturn(false).thenReturn(true);
+
+        Assertions.assertThrows(CarExistsException.class, () ->carsService.addCar(List.of(carDTO, carDTO)));
     }
 }

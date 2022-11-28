@@ -21,6 +21,8 @@ import static io.restassured.RestAssured.given;
 
 public class StepDefs {
 
+    private static final Map<String, String> ENDPOINTS = Map.of("POST_CAR", "cars/admin");
+
     RequestSpecification request;
     Response response;
     @When("^the client calls /private/status$")
@@ -43,6 +45,12 @@ public class StepDefs {
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(table);
         request = given().contentType(ContentType.JSON).body(json);
+    }
+
+    @Given("The following car exists in the database")
+    public void theFollowingCarHasBeenPostedToTheCarsAdminEndpoint(List<Map<String, String>> table) throws JsonProcessingException {
+        i_want_to_add_the_following_car(table);
+        request.post(ENDPOINTS.get("POST_CAR"));
     }
 
     @When("I POST to the {string} endpoint")

@@ -1,7 +1,9 @@
 package com.training.cardealership.cars;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.stereotype.Indexed;
 
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Min;
@@ -10,6 +12,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 @Document
+@CompoundIndex(def= "{brand:1, model:1}", unique = true)
 public class Car {
 
     @Id

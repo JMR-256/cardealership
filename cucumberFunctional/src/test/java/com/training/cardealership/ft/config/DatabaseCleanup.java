@@ -15,8 +15,6 @@ public class DatabaseCleanup {
 
     @AfterTestClass
     public void afterTest() {
-        System.out.println("Dropping db");
         mongoTemplate.getDb().drop();
     }
-
 }
