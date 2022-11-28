@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.MongoExceptionTranslator;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CarsService {
@@ -30,7 +31,15 @@ public class CarsService {
             });
     }
 
+    public List<CarDTO> getCars() {
+        return carsRepository.findAll().stream().map(this::mapToDTO).collect(Collectors.toList());
+    }
+
     private Car mapToEntity(CarDTO car) {
         return new Car(car.getBrand(), car.getModel(), car.getPrice(), car.getYear(), car.getMileage(), car.getColour());
+    }
+
+    private CarDTO mapToDTO(Car car) {
+        return new CarDTO(car.getBrand(), car.getModel(), car.getPrice(), car.getYear(), car.getMileage(), car.getColour());
     }
 }

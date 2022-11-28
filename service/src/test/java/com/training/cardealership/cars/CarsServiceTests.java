@@ -23,29 +23,35 @@ public class CarsServiceTests {
     @Mock
     private CarsRepository carsRepository;
 
+    private static final Car EXAMPLE_CAR = new Car("BMW", "X5", 80000, 2022, 10000, "Space Grey");
+    private static final CarDTO EXAMPLE_CAR_DTO = new CarDTO("BMW", "X5", 80000, 2022, 10000, "Space Grey");
+
     @Test
     void add_car_callsRepository_correctNumber_of_time() {
-        List<CarDTO> cars = List.of(new CarDTO("BMW", "X5", 80000, 2022, 10000, "Space Grey"));
+        List<CarDTO> cars = List.of(EXAMPLE_CAR_DTO);
         carsService.addCar(cars);
-        Mockito.verify(carsRepository, times(1)).save(new Car("BMW", "X5", 80000, 2022, 10000, "Space Grey"));
+        Mockito.verify(carsRepository, times(1)).save(EXAMPLE_CAR);
     }
 
     @Test
     void throws_exception_when_data_not_valid() {
-        CarDTO carDTO = new CarDTO("BMW", "X5", 80000, 2022, 10000, "Space Grey");
-        Car car =  new Car("BMW", "X5", 80000, 2022, 10000, "Space Grey");
-
-        Mockito.when(carsRepository.save(car)).thenThrow(ConstraintViolationException.class);
-        List<CarDTO> cars = List.of(carDTO);
+        Mockito.when(carsRepository.save(EXAMPLE_CAR)).thenThrow(ConstraintViolationException.class);
+        List<CarDTO> cars = List.of(EXAMPLE_CAR_DTO);
         Assertions.assertThrows(ConstraintViolationException.class, () ->carsService.addCar(cars));
-        Mockito.verify(carsRepository, times(1)).save(car);
+        Mockito.verify(carsRepository, times(1)).save(EXAMPLE_CAR);
     }
 
     @Test
     void throws_correct_exception_when_duplicate_car_exists() {
-        CarDTO carDTO = new CarDTO("BMW", "X5", 80000, 2022, 10000, "Space Grey");
-        Mockito.when(carsRepository.existsByBrandIgnoreCaseAndModelIgnoreCase(carDTO.getBrand(), carDTO.getModel())).thenReturn(false).thenReturn(true);
+        Mockito.when(carsRepository.existsByBrandIgnoreCaseAndModelIgnoreCase(EXAMPLE_CAR_DTO.getBrand(), EXAMPLE_CAR_DTO.getModel())).thenReturn(false).thenReturn(true);
 
-        Assertions.assertThrows(CarExistsException.class, () ->carsService.addCar(List.of(carDTO, carDTO)));
+        Assertions.assertThrows(CarExistsException.class, () ->carsService.addCar(List.of(EXAMPLE_CAR_DTO, EXAMPLE_CAR_DTO)));
+    }
+    @Test
+    void findCars_calls_repo_findAll() {
+    Mockito.when(carsRepository.findAll()).thenReturn(List.of(EXAMPLE_CAR));
+     List<CarDTO> responseCars = carsService.getCars();
+     Assertions.assertEquals(List.of(EXAMPLE_CAR_DTO), responseCars);
+     Mockito.verify(carsRepository, times(1)).findAll();
     }
 }

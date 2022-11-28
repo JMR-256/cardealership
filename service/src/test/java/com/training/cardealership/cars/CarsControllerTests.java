@@ -35,6 +35,12 @@ public class CarsControllerTests {
         Assertions.assertEquals("Database updated" ,response.getBody().get("description"));
     }
 
+    @Test
+    void getCar_returns200() {
+        ResponseEntity<?> response = carsController.getCars();
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
     private  ResponseEntity<Map<String, String>> carsControllerAdder() {
         return carsController.addCar(List.of(new CarDTO("BMW", "X5", 800000, 2022, 10000, "Space Grey")));
     }
