@@ -1,0 +1,62 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '2.7.5'
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+}
+
+group 'com.training'
+version '0.0.1-SNAPSHOT'
+sourceCompatibility = '17'
+bootJar.enabled = false
+jar.enabled = false
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation project(':service')
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    testImplementation 'io.cucumber:cucumber-java:7.9.0'
+    testImplementation 'io.cucumber:cucumber-junit:7.9.0'
+    testImplementation 'io.cucumber:cucumber-spring:7.9.0'
+    testImplementation 'io.rest-assured:rest-assured:5.3.0'
+    testImplementation 'io.rest-assured:xml-path:5.3.0'
+    testImplementation 'io.rest-assured:json-path:5.3.0'
+    testImplementation 'io.rest-assured:rest-assured-common:5.3.0'
+    testImplementation 'com.fasterxml.jackson.core:jackson-databind:2.14.1'
+}
+
+configurations {
+    cucumberRuntime {
+        extendsFrom testImplementation
+    }
+}
+
+final profile = "local"
+
+tasks.register("cucumber"){
+    dependsOn assemble, testClasses
+    doLast {
+        javaexec {
+            systemProperties = ['spring.profiles.active': profile]
+            main = "io.cucumber.core.cli.Main"
+            classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
+            args = [
+                    '--plugin', 'pretty',
+                    '--plugin', 'html:target/cucumber-report.html',
+                    '--glue', 'com.training.cardealership.ft',
+                    'src/test/resources']
+            jvmArgs = ['-Dspring.devtools.restart.enabled=false']
+        }
+    }
+}
+
+test {
+    systemProperties = ['spring.profiles.avtive': profile]
+    useJUnitPlatform()
+    finalizedBy cucumber
+}
