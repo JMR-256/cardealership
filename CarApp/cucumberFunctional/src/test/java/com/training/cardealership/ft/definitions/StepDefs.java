@@ -39,7 +39,7 @@ public class StepDefs {
     }
 
     @Given("I want to add the following car")
-    public void i_want_to_add_the_following_car(List<Map<String, Object>> table) throws JsonProcessingException {
+    public void i_want_to_add_the_following_car(List<Map<String, String>> table) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(table);
         request = given().contentType(ContentType.JSON).body(json);
