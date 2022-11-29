@@ -8,13 +8,12 @@ import org.junit.jupiter.params.provider.EmptySource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-public class StringValidatorsTest {
+public class StringValidatorsTests {
 
     @ParameterizedTest
     @NullSource
     @EmptySource
     void test_notEmpty_returnsFalse(String value) {
-        System.out.println("fdsafdsa");
         Assertions.assertFalse(StringValidators.notEmpty.test(value));
     }
 
@@ -74,7 +73,7 @@ public class StringValidatorsTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"", " ", "asf", "fdsa2", "3e", "    "})
+    @ValueSource(strings = {" ", "asf", "fdsa2", "3e", "    "})
     @EmptySource
     @NullSource
     void notContainingSpecials_returnsTrue(String value) {
