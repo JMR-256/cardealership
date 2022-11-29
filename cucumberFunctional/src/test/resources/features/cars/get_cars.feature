@@ -93,3 +93,17 @@ Feature: Retrieving cars from the database
       | BMW   | X6    | 100000| 2023 | 3000    | Magenta |
 
 
+  Scenario Outline: Sending a request with <issue>
+    When the client GETs the endpoint 'cars/admin' with query <query>
+    Then the client receives status code of 400
+    And the JSON should contain the key 'description' with value 'Incorrect query parameter provided'
+
+    Examples:
+    | issue                         | query                              |
+    | an invalid query key          | 'invalid=true'                     |
+    | a empty query                 | 'brand='                           |
+    | an empty number query         | 'price='                           |
+    | number field contains chars   | 'mileage=test&year=test&price=test'|
+    | field contains special chars  | 'brand=/\fdsa'                     |
+
+
