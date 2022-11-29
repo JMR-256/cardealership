@@ -13,10 +13,8 @@ import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.Assertions;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
@@ -65,6 +63,16 @@ public class StepDefs {
         response = given().get(endpoint);
     }
 
+    @When("the client GETs the endpoint {string} with query {string}")
+    public void clientGetsEndpointQuery(String endpoint, String query) {
+        String[] queryParts = query.split("&");
+        Map<String, String> queryParams = Arrays.stream(queryParts)
+                .map((queryKeyValue) -> queryKeyValue.split("="))
+                .collect(Collectors.toMap(splitString -> splitString[0], splitString -> splitString[1]));
+
+        response = given().queryParams(queryParams).get(endpoint);
+    }
+
 
     @And("the JSON should contain the key {string} with value {string}")
     public void theJSONShouldContainTheKeyXWithValueY(String expectedKey, String expectedValue) {
@@ -78,14 +86,22 @@ public class StepDefs {
         request = given().contentType(ContentType.JSON).body(carJSON);
     }
 
+
+    @And("the client receives response JSON containing Unordered")
+    public void checkResponseJsonUnordered(List<Map<String, String>> expectedResult) {
+        Set<Map<String, String>> parsedResponse = response.as(new TypeRef<Set<Map<String, String>>>(){});
+        Assertions.assertEquals(new HashSet<>(expectedResult), parsedResponse);
+    }
+
+    @And("the client receives response JSON containing")
+    public void checkResponseJson(List<Map<String, String>> expectedResult) {
+        List<Map<String, String>> parsedResponse = response.as(new TypeRef<List<Map<String, String>>>(){});
+        Assertions.assertEquals(expectedResult, parsedResponse);
+    }
+
     @DataTableType(replaceWithEmptyString = "[blank]")
     public String stringType(String cell) {
         return cell;
     }
 
-    @And("the client receives response JSON containing")
-    public void checkResponseJson(List<Map<String, String>> expectedResult) {
-        Set<Map<String, String>> parsedResponse = response.as(new TypeRef<Set<Map<String, String>>>(){});
-        Assertions.assertEquals(new HashSet<>(expectedResult), parsedResponse);
-    }
 }
