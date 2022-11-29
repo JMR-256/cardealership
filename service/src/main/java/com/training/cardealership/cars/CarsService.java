@@ -1,16 +1,10 @@
 package com.training.cardealership.cars;
 
-import com.mongodb.MongoException;
-import com.mongodb.MongoWriteException;
+import com.training.cardealership.validation.QueryValidator;
+import com.training.cardealership.validation.StringValidators;
 import com.training.cardealership.exceptions.CarExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.mongodb.core.MongoExceptionTranslator;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +18,13 @@ public class CarsService {
     private CarsRepository carsRepository;
 
     private static final Sort DEFAULT_CAR_SORT = Sort.by(Sort.Direction.ASC, "brand");
+    private static final QueryValidator queryValidator = new QueryValidator(true)
+            .addValidationRule("brand", List.of(StringValidators.notEmpty, StringValidators.notContainingSpecials, StringValidators.notContainingWhitespace))
+            .addValidationRule("model", List.of(StringValidators.notEmpty, StringValidators.notContainingSpecials))
+            .addValidationRule("price", List.of(StringValidators.notEmpty, StringValidators.isInteger))
+            .addValidationRule("year", List.of(StringValidators.notEmpty, StringValidators.isInteger))
+            .addValidationRule("mileage", List.of(StringValidators.notEmpty, StringValidators.isInteger))
+            .addValidationRule("colour", List.of(StringValidators.notEmpty, StringValidators.notContainingSpecials));
 
     public CarsService(CarsRepository carsRepository) {
         this.carsRepository = carsRepository;
@@ -42,15 +43,16 @@ public class CarsService {
         if (params.size() == 0)
             return getAllCars();
         else
-            return getCarsByQuery(params.get("brand"), params.get("model"), params.get("price"), params.get("year"), params.get("mileage"), params.get("colour"));
+            return getCarsByQuery(params);
     }
 
     private List<CarDTO> getAllCars() {
         return mapResponse(carsRepository.findAll(DEFAULT_CAR_SORT));
     }
 
-    private List<CarDTO> getCarsByQuery(String brand, String model, String price, String year, String mileage, String colour) {
-        return mapResponse(carsRepository.findByQuery(brand, model, price, year, mileage, colour, DEFAULT_CAR_SORT));
+    private List<CarDTO> getCarsByQuery(Map<String, String> params) {
+        queryValidator.validate(params);
+        return mapResponse(carsRepository.findByQuery(params.get("brand"), params.get("model"), params.get("price"), params.get("year"), params.get("mileage"), params.get("colour"), DEFAULT_CAR_SORT));
     }
 
     private Car mapToEntity(CarDTO car) {

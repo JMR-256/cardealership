@@ -1,6 +1,7 @@
 package com.training.cardealership;
 
 import com.training.cardealership.exceptions.CarExistsException;
+import com.training.cardealership.exceptions.InvalidQueryException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,5 +28,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CarExistsException.class)
     ResponseEntity<Map<String, String>> duplicateCarException() {
         return new ResponseEntity<>(Map.of("description", "Car already exists"), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(InvalidQueryException.class)
+    ResponseEntity<Map<String, String>> invalidQueryException() {
+        return new ResponseEntity<>(Map.of("description", "Incorrect query parameter provided"), HttpStatus.BAD_REQUEST);
     }
 }

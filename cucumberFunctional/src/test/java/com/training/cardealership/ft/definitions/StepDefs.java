@@ -68,7 +68,7 @@ public class StepDefs {
         String[] queryParts = query.split("&");
         Map<String, String> queryParams = Arrays.stream(queryParts)
                 .map((queryKeyValue) -> queryKeyValue.split("="))
-                .collect(Collectors.toMap(splitString -> splitString[0], splitString -> splitString[1]));
+                .collect(Collectors.toMap(splitString -> splitString[0], splitString -> splitString.length > 1 ? splitString[1] : ""));
 
         response = given().queryParams(queryParams).get(endpoint);
     }
