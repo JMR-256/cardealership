@@ -1,6 +1,7 @@
 package com.training.cardealership.cars;
 
 import com.training.cardealership.exceptions.CarExistsException;
+import com.training.cardealership.exceptions.InvalidQueryException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -61,6 +62,46 @@ public class CarsServiceTests {
      Assertions.assertEquals(List.of(EXAMPLE_CAR_DTO), responseCars);
      Mockito.verify(carsRepository, times(1)).findAll(any(Sort.class));
     }
+
+    @Test
+    void findCars_throwsException_whenUsingUnexpectedQueryParam() {
+        Assertions.assertThrows(InvalidQueryException.class, ()-> carsService.getCars(Map.of("Invalid", "param")));
+    }
+
+    @Test
+    void findCars_throwsException_whenYearQueryParamContainsCharacters() {
+        Assertions.assertThrows(InvalidQueryException.class, ()-> carsService.getCars(Map.of("year", "fsdj")));
+    }
+    @Test
+    void findCars_throwsException_whenMileageQueryParamContainsCharacters() {
+        Assertions.assertThrows(InvalidQueryException.class, ()-> carsService.getCars(Map.of("mileage", "fsdj")));
+    }
+
+    @Test
+    void findCars_throwsException_whenPriceQueryParamContainsCharacters() {
+        Assertions.assertThrows(InvalidQueryException.class, ()-> carsService.getCars(Map.of("price", "fsdj")));
+    }
+
+    @Test
+    void findCars_throwsException_whenUsingPriceQueryParamContainsCharacters() {
+        Assertions.assertThrows(InvalidQueryException.class, ()-> carsService.getCars(Map.of("price", "fsdj")));
+    }
+
+    @Test
+    void findCars_throwsException_whenUsingBrandQueryParamContainsWhitespace() {
+        Assertions.assertThrows(InvalidQueryException.class, ()-> carsService.getCars(Map.of("brand", "fsdj fdsha")));
+    }
+
+    @Test
+    void findCars_throwsException_whenUsingBrandQueryParamContainsSpecialCharacters() {
+        Assertions.assertThrows(InvalidQueryException.class, ()-> carsService.getCars(Map.of("brand", "fsdj!fdsha")));
+    }
+
+    @Test
+    void findCars_throwsException_whenUsingModelQueryParamContainsSpecialCharacters() {
+        Assertions.assertThrows(InvalidQueryException.class, ()-> carsService.getCars(Map.of("model", "fsdj!fdsha")));
+    }
+
 
     @Test
     void findCars_calls_repo_findByQuery_whenParamsNotEmpty() {

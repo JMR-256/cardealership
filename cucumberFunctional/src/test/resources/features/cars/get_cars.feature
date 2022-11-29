@@ -105,5 +105,6 @@ Feature: Retrieving cars from the database
     | an empty number query         | 'price='                           |
     | number field contains chars   | 'mileage=test&year=test&price=test'|
     | field contains special chars  | 'brand=/\fdsa'                     |
+    | field contains whitespace     | 'brand=AMG Mercedes'               |
 
 
