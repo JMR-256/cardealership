@@ -1,7 +1,7 @@
 package com.training.cardealership.cars;
 
-import com.training.cardealership.QueryValidator;
-import com.training.cardealership.StringValidators;
+import com.training.cardealership.validation.QueryValidator;
+import com.training.cardealership.validation.StringValidators;
 import com.training.cardealership.exceptions.CarExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;

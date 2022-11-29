@@ -1,11 +1,10 @@
-package com.training.cardealership;
+package com.training.cardealership.validation;
 
 
 import com.training.cardealership.exceptions.InvalidQueryException;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.function.Predicate;
 
