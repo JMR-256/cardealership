@@ -6,6 +6,7 @@ import com.training.cardealership.exceptions.CarExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoExceptionTranslator;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -21,6 +22,8 @@ public class CarsService {
 
     @Autowired
     private CarsRepository carsRepository;
+
+    private static final Sort DEFAULT_CAR_SORT = Sort.by(Sort.Direction.ASC, "brand");
 
     public CarsService(CarsRepository carsRepository) {
         this.carsRepository = carsRepository;
@@ -43,11 +46,11 @@ public class CarsService {
     }
 
     private List<CarDTO> getAllCars() {
-        return mapResponse(carsRepository.findAll());
+        return mapResponse(carsRepository.findAll(DEFAULT_CAR_SORT));
     }
 
     private List<CarDTO> getCarsByQuery(String brand, String model, String price, String year, String mileage, String colour) {
-        return mapResponse(carsRepository.findByQuery(brand, model, price, year, mileage, colour));
+        return mapResponse(carsRepository.findByQuery(brand, model, price, year, mileage, colour, DEFAULT_CAR_SORT));
     }
 
     private Car mapToEntity(CarDTO car) {

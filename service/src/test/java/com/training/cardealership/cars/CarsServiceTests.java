@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Query;
 
 import javax.validation.ConstraintViolationException;
@@ -55,17 +56,17 @@ public class CarsServiceTests {
     }
     @Test
     void findCars_calls_repo_findAll_whenParamsEmpty() {
-    Mockito.when(carsRepository.findAll()).thenReturn(List.of(EXAMPLE_CAR));
+    Mockito.when(carsRepository.findAll(any(Sort.class))).thenReturn(List.of(EXAMPLE_CAR));
      List<CarDTO> responseCars = carsService.getCars(new HashMap<>());
      Assertions.assertEquals(List.of(EXAMPLE_CAR_DTO), responseCars);
-     Mockito.verify(carsRepository, times(1)).findAll();
+     Mockito.verify(carsRepository, times(1)).findAll(any(Sort.class));
     }
 
     @Test
     void findCars_calls_repo_findByQuery_whenParamsNotEmpty() {
-        Mockito.when(carsRepository.findByQuery(eq("BMW"), any(), any(), any(), any(), any())).thenReturn(List.of(EXAMPLE_CAR));
+        Mockito.when(carsRepository.findByQuery(eq("BMW"), any(), any(), any(), any(), any(), eq(Sort.by(Sort.Direction.ASC, "brand")))).thenReturn(List.of(EXAMPLE_CAR));
         List<CarDTO> responseCars = carsService.getCars(Map.of("brand", "BMW"));
         Assertions.assertEquals(List.of(EXAMPLE_CAR_DTO), responseCars);
-        Mockito.verify(carsRepository, times(1)).findByQuery(eq("BMW"), any(), any(), any(), any(), any());
+        Mockito.verify(carsRepository, times(1)).findByQuery(eq("BMW"), any(), any(), any(), any(), any(), eq(Sort.by(Sort.Direction.ASC, "brand")));
     }
 }

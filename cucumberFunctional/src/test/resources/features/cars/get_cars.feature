@@ -3,6 +3,7 @@ Feature: Retrieving cars from the database
   Scenario: Retrieving all cars sorted by brand
     Given The following cars exists in the database
       | brand | model | price | year | mileage | colour |
+      | Ford  | Focus | 26000 | 2022 | 100     | Red    |
       | BMW   | X5    | 80000 | 2022 | 10000   | Space Grey |
       | BMW   | X6    | 100000| 2023 | 3000    | Magenta    |
       | Audi  | R8    | 250000| 2022 | 100     | Black      |
@@ -13,6 +14,7 @@ Feature: Retrieving cars from the database
     | Audi  | R8    | 250000| 2022 | 100     | Black      |
     | BMW   | X5    | 80000 | 2022 | 10000   | Space Grey |
     | BMW   | X6    | 100000| 2023 | 3000    | Magenta    |
+    | Ford  | Focus | 26000 | 2022 | 100     | Red    |
 
 
   Scenario: Retrieving all BMWs

@@ -1,6 +1,7 @@
 package com.training.cardealership.cars;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -12,7 +13,7 @@ public class ComplexCarRepositoryImpl implements ComplexCarRepository {
     @Autowired
     private MongoTemplate mongoTemplate;
     @Override
-    public List<Car> findByQuery(String brand, String model, String price, String year, String mileage, String colour) {
+    public List<Car> findByQuery(String brand, String model, String price, String year, String mileage, String colour, Sort sort) {
         Query query = new Query();
 
         if (brand != null) {
@@ -36,6 +37,6 @@ public class ComplexCarRepositoryImpl implements ComplexCarRepository {
         if (colour != null) {
             query.addCriteria(Criteria.where("colour").regex(colour, "i"));
         }
-        return mongoTemplate.find(query, Car.class);
+        return mongoTemplate.find(query.with(sort), Car.class);
     }
 }
