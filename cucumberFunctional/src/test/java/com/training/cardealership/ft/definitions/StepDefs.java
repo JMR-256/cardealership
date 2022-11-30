@@ -111,6 +111,11 @@ public class StepDefs {
         Assertions.assertEquals(expectedResult, parsedResponse);
     }
 
+    @When("The client performs a DELETE request to the endpoint {string}")
+    public void the_client_performs_a_delete_request_to_the_endpoint(String endpoint) {
+        response = given().delete(endpoint);
+    }
+
     @DataTableType(replaceWithEmptyString = "[blank]")
     public String stringType(String cell) {
         return cell;
