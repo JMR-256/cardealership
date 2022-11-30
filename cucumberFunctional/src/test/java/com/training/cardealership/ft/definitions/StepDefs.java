@@ -48,7 +48,10 @@ public class StepDefs {
     @Given("The following cars exists in the database")
     public void theFollowingCarHasBeenPostedToTheCarsAdminEndpoint(List<Map<String, String>> table) throws JsonProcessingException {
         i_want_to_add_the_following_car(table);
-        request.post(ENDPOINTS.get("POST_CAR"));
+        response = request.post(ENDPOINTS.get("POST_CAR"));
+        if (response.statusCode() >= 400) {
+            throw new RuntimeException();
+        }
     }
 
     @When("I POST to the {string} endpoint")
@@ -63,12 +66,13 @@ public class StepDefs {
 
     @When("the client GETs the endpoint {string} with query {string}")
     public void clientGetsEndpointQuery(String endpoint, String query) {
-        String[] queryParts = query.split("&");
-        Map<String, String> queryParams = Arrays.stream(queryParts)
-                .map((queryKeyValue) -> queryKeyValue.split("="))
-                .collect(Collectors.toMap(splitString -> splitString[0], splitString -> splitString.length > 1 ? splitString[1] : ""));
-
+        Map<String, String> queryParams = splitQueryParams(query);
         response = given().queryParams(queryParams).get(endpoint);
+    }
+
+    @And("a GET request to {string} with query {string}")
+    public void aGETRequestWithQueryBrandBmwModelXShouldRetrieveTheUpdatedCar(String endpoint, String query) {
+        response = given().queryParams((splitQueryParams(query))).get(endpoint);
     }
 
     @When("The client PUTs the endpoint {string} with the following data")
@@ -112,4 +116,13 @@ public class StepDefs {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsString(table);
     }
+
+    private Map<String, String> splitQueryParams(String query) {
+        String[] queryParts = query.split("&");
+        return Arrays.stream(queryParts)
+                .map((queryKeyValue) -> queryKeyValue.split("="))
+                .collect(Collectors.toMap(splitString -> splitString[0], splitString -> splitString.length > 1 ? splitString[1] : ""));
+    }
+
+
 }

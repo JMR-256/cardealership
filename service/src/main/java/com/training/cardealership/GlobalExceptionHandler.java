@@ -1,6 +1,7 @@
 package com.training.cardealership;
 
 import com.training.cardealership.exceptions.CarExistsException;
+import com.training.cardealership.exceptions.EntityNotFoundException;
 import com.training.cardealership.exceptions.InvalidQueryException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
@@ -15,7 +16,7 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({HttpMessageNotReadableException.class, ConstraintViolationException.class})
+    @ExceptionHandler({HttpMessageNotReadableException.class, ConstraintViolationException.class, EntityNotFoundException.class})
     ResponseEntity<Map<String, String>> malformedRequestHandler(){
         return new ResponseEntity<>(Map.of("description","Incorrect car data provided"), HttpStatus.BAD_REQUEST);
     }
@@ -34,4 +35,6 @@ public class GlobalExceptionHandler {
     ResponseEntity<Map<String, String>> invalidQueryException() {
         return new ResponseEntity<>(Map.of("description", "Incorrect query parameter provided"), HttpStatus.BAD_REQUEST);
     }
+
+
 }

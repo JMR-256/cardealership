@@ -1,6 +1,7 @@
 package com.training.cardealership.cars;
 
 import com.training.cardealership.exceptions.CarExistsException;
+import com.training.cardealership.exceptions.EntityNotFoundException;
 import com.training.cardealership.exceptions.InvalidQueryException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,7 @@ import javax.validation.ConstraintViolationException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -102,6 +104,23 @@ public class CarsServiceTests {
         Assertions.assertThrows(InvalidQueryException.class, ()-> carsService.getCars(Map.of("model", "fsdj!fdsha")));
     }
 
+    @Test
+    void updateCars_throwsException_if_carDoesNotExist() {
+        Mockito.when(carsRepository.findByBrandIgnoreCaseAndModelIgnoreCase(any(), any())).thenReturn(Optional.empty());
+        Assertions.assertThrows(EntityNotFoundException.class, () -> carsService.updateCar(EXAMPLE_CAR_DTO));
+        Mockito.verify(carsRepository, times(1)).findByBrandIgnoreCaseAndModelIgnoreCase(any(), any());
+    }
+
+    @Test
+    void updateCars_callsFindCar_and_Save() {
+        Car updatedCar = new Car(EXAMPLE_CAR.getBrand(), EXAMPLE_CAR.getModel(), EXAMPLE_CAR.getPrice(), EXAMPLE_CAR.getYear(), EXAMPLE_CAR.getMileage(), "Pink");
+        CarDTO updatedCarDTO = new CarDTO(EXAMPLE_CAR.getBrand(), EXAMPLE_CAR.getModel(), EXAMPLE_CAR.getPrice(), EXAMPLE_CAR.getYear(), EXAMPLE_CAR.getMileage(), "Pink");
+
+        Mockito.when(carsRepository.findByBrandIgnoreCaseAndModelIgnoreCase(EXAMPLE_CAR.getBrand(), EXAMPLE_CAR.getModel())).thenReturn(Optional.of(EXAMPLE_CAR));
+        carsService.updateCar(updatedCarDTO);
+        Mockito.verify(carsRepository, times(1)).findByBrandIgnoreCaseAndModelIgnoreCase(any(), any());
+        Mockito.verify(carsRepository, times(1)).save(updatedCar);
+    }
 
     @Test
     void findCars_calls_repo_findByQuery_whenParamsNotEmpty() {
