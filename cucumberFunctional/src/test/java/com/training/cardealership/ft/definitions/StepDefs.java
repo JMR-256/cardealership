@@ -16,8 +16,7 @@ import org.junit.jupiter.api.Assertions;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static io.restassured.RestAssured.get;
-import static io.restassured.RestAssured.given;
+import static io.restassured.RestAssured.*;
 
 public class StepDefs {
 
@@ -42,15 +41,17 @@ public class StepDefs {
 
     @Given("I want to add the following car")
     public void i_want_to_add_the_following_car(List<Map<String, String>> table) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(table);
+        String json = convertToJson(table);
         request = given().contentType(ContentType.JSON).body(json);
     }
 
     @Given("The following cars exists in the database")
     public void theFollowingCarHasBeenPostedToTheCarsAdminEndpoint(List<Map<String, String>> table) throws JsonProcessingException {
         i_want_to_add_the_following_car(table);
-        request.post(ENDPOINTS.get("POST_CAR"));
+        response = request.post(ENDPOINTS.get("POST_CAR"));
+        if (response.statusCode() >= 400) {
+            throw new RuntimeException();
+        }
     }
 
     @When("I POST to the {string} endpoint")
@@ -65,12 +66,19 @@ public class StepDefs {
 
     @When("the client GETs the endpoint {string} with query {string}")
     public void clientGetsEndpointQuery(String endpoint, String query) {
-        String[] queryParts = query.split("&");
-        Map<String, String> queryParams = Arrays.stream(queryParts)
-                .map((queryKeyValue) -> queryKeyValue.split("="))
-                .collect(Collectors.toMap(splitString -> splitString[0], splitString -> splitString.length > 1 ? splitString[1] : ""));
-
+        Map<String, String> queryParams = splitQueryParams(query);
         response = given().queryParams(queryParams).get(endpoint);
+    }
+
+    @And("a GET request to {string} with query {string}")
+    public void aGETRequestWithQueryBrandBmwModelXShouldRetrieveTheUpdatedCar(String endpoint, String query) {
+        response = given().queryParams((splitQueryParams(query))).get(endpoint);
+    }
+
+    @When("The client PUTs the endpoint {string} with the following data")
+    public void the_client_puts_the_endpoint_with_the_following_data(String endpoint, List<Map<String, String>> formBody) throws JsonProcessingException {
+        String json = convertToJson(formBody.get(0));
+        response = given().contentType(ContentType.JSON).body(json).put(endpoint);
     }
 
 
@@ -103,5 +111,18 @@ public class StepDefs {
     public String stringType(String cell) {
         return cell;
     }
+
+    private String convertToJson(Object table) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.writeValueAsString(table);
+    }
+
+    private Map<String, String> splitQueryParams(String query) {
+        String[] queryParts = query.split("&");
+        return Arrays.stream(queryParts)
+                .map((queryKeyValue) -> queryKeyValue.split("="))
+                .collect(Collectors.toMap(splitString -> splitString[0], splitString -> splitString.length > 1 ? splitString[1] : ""));
+    }
+
 
 }

@@ -28,4 +28,17 @@ public class StringValidators {
             return false;
         }
     };
+
+    public static class LengthValidator implements Predicate<String> {
+        private int length;
+        public LengthValidator(int length) {
+            this.length = length;
+        }
+
+
+        @Override
+        public boolean test(String s) {
+            return s != null && s.length() == this.length;
+        }
+    }
 }

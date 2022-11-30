@@ -106,5 +106,7 @@ Feature: Retrieving cars from the database
     | number field contains chars   | 'mileage=test&year=test&price=test'|
     | field contains special chars  | 'brand=/\fdsa'                     |
     | field contains whitespace     | 'brand=AMG Mercedes'               |
+    | year length is less than 4    | 'year=200'                         |
+    | year length is greater than 4 | 'year=324432'                      |
 
 

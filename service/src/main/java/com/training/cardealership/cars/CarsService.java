@@ -1,8 +1,9 @@
 package com.training.cardealership.cars;
 
+import com.training.cardealership.exceptions.CarExistsException;
+import com.training.cardealership.exceptions.EntityNotFoundException;
 import com.training.cardealership.validation.QueryValidator;
 import com.training.cardealership.validation.StringValidators;
-import com.training.cardealership.exceptions.CarExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,7 @@ public class CarsService {
             .addValidationRule("brand", List.of(StringValidators.notEmpty, StringValidators.notContainingSpecials, StringValidators.notContainingWhitespace))
             .addValidationRule("model", List.of(StringValidators.notEmpty, StringValidators.notContainingSpecials))
             .addValidationRule("price", List.of(StringValidators.notEmpty, StringValidators.isInteger))
-            .addValidationRule("year", List.of(StringValidators.notEmpty, StringValidators.isInteger))
+            .addValidationRule("year", List.of(StringValidators.notEmpty, StringValidators.isInteger, new StringValidators.LengthValidator(4)))
             .addValidationRule("mileage", List.of(StringValidators.notEmpty, StringValidators.isInteger))
             .addValidationRule("colour", List.of(StringValidators.notEmpty, StringValidators.notContainingSpecials));
 
@@ -65,5 +66,16 @@ public class CarsService {
 
     private List<CarDTO> mapResponse(List<Car> cars) {
         return cars.stream().map(this::mapToDTO).collect(Collectors.toList());
+    }
+
+    public void updateCar(CarDTO carDTO) {
+        Car car = carsRepository.findByBrandIgnoreCaseAndModelIgnoreCase(carDTO.getBrand(), carDTO.getModel()).orElseThrow(EntityNotFoundException::new);
+
+        car.setColour(carDTO.getColour());
+        car.setMileage(carDTO.getMileage());
+        car.setPrice(carDTO.getPrice());
+        car.setYear(carDTO.getYear());
+
+        carsRepository.save(car);
     }
 }

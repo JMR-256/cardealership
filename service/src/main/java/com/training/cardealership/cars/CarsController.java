@@ -33,4 +33,10 @@ public class CarsController {
     public ResponseEntity<List<CarDTO>> getCars(@RequestParam Map<String, String> queryParams) {
         return ResponseEntity.ok(carsService.getCars(queryParams));
     }
+
+    @PutMapping("/admin")
+    public ResponseEntity<Map<String, String>> updateCar(@RequestBody @Valid CarDTO car) {
+        carsService.updateCar(car);
+        return ResponseEntity.ok(Map.of("description", "Car updated"));
+    }
 }

@@ -42,6 +42,19 @@ public class CarsControllerTests {
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
+    @Test
+    void putCar_returns200() {
+        ResponseEntity<?> response = carsController.updateCar(new CarDTO("Ford", "Fiesta", 10000, 2022, 2000, "red"));
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void putCar_returnsCorrectBody() {
+        ResponseEntity<Map<String, String>> response = carsController.updateCar(new CarDTO("Ford", "Fiesta", 10000, 2022, 2000, "red"));
+        Assertions.assertTrue(response.getBody().containsKey("description"));
+        Assertions.assertEquals("Car updated" ,response.getBody().get("description"));
+    }
+
     private  ResponseEntity<Map<String, String>> carsControllerAdder() {
         return carsController.addCar(List.of(new CarDTO("BMW", "X5", 800000, 2022, 10000, "Space Grey")));
     }
