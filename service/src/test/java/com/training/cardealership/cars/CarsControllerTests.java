@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.mockito.ArgumentMatchers.any;
+
 @ExtendWith(MockitoExtension.class)
 public class CarsControllerTests {
 
@@ -53,6 +55,12 @@ public class CarsControllerTests {
         ResponseEntity<Map<String, String>> response = carsController.updateCar(new CarDTO("Ford", "Fiesta", 10000, 2022, 2000, "red"));
         Assertions.assertTrue(response.getBody().containsKey("description"));
         Assertions.assertEquals("Car updated" ,response.getBody().get("description"));
+    }
+
+    @Test
+    void deleteCar_returns204() {
+        ResponseEntity<?> response = carsController.deleteCar(any(), any());
+        Assertions.assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 
     private  ResponseEntity<Map<String, String>> carsControllerAdder() {
