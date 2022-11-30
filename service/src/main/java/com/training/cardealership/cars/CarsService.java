@@ -56,6 +56,17 @@ public class CarsService {
         return mapResponse(carsRepository.findByQuery(params.get("brand"), params.get("model"), params.get("price"), params.get("year"), params.get("mileage"), params.get("colour"), DEFAULT_CAR_SORT));
     }
 
+    public void updateCar(CarDTO carDTO) {
+        Car car = carsRepository.findByBrandIgnoreCaseAndModelIgnoreCase(carDTO.getBrand(), carDTO.getModel()).orElseThrow(EntityNotFoundException::new);
+
+        car.setColour(carDTO.getColour());
+        car.setMileage(carDTO.getMileage());
+        car.setPrice(carDTO.getPrice());
+        car.setYear(carDTO.getYear());
+
+        carsRepository.save(car);
+    }
+
     private Car mapToEntity(CarDTO car) {
         return new Car(car.getBrand(), car.getModel(), car.getPrice(), car.getYear(), car.getMileage(), car.getColour());
     }
@@ -68,14 +79,4 @@ public class CarsService {
         return cars.stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 
-    public void updateCar(CarDTO carDTO) {
-        Car car = carsRepository.findByBrandIgnoreCaseAndModelIgnoreCase(carDTO.getBrand(), carDTO.getModel()).orElseThrow(EntityNotFoundException::new);
-
-        car.setColour(carDTO.getColour());
-        car.setMileage(carDTO.getMileage());
-        car.setPrice(carDTO.getPrice());
-        car.setYear(carDTO.getYear());
-
-        carsRepository.save(car);
-    }
 }
