@@ -81,6 +81,10 @@ public class StepDefs {
         response = given().contentType(ContentType.JSON).body(json).put(endpoint);
     }
 
+    @When("The client PUTs the endpoint {string} with the following JSON {string}")
+    public void the_client_pu_ts_the_endpoint_with_the_following_json(String endpoint, String jsonString) {
+        response = given().contentType(ContentType.JSON).body(jsonString).put(endpoint);
+    }
 
     @And("the JSON should contain the key {string} with value {string}")
     public void theJSONShouldContainTheKeyXWithValueY(String expectedKey, String expectedValue) {
