@@ -37,3 +37,8 @@ Feature: Editing a car in the database
     When The client PUTs the endpoint '/cars/admin' with the following JSON '[{"brand": BMW,"model": "X5","year": 2022,"price": 80000,"mileage": 10000,"colour": "space grey"}]'
     Then the client receives status code of 400
     And the JSON should contain the key 'description' with value 'Incorrect car data provided'
+
+  Scenario: Year that is not a length of 4
+    When The client PUTs the endpoint '/cars/admin' with the following JSON '[{"brand": BMW,"model": "X5","year": 202,"price": 80000,"mileage": 10000,"colour": "space grey"}]'
+    Then the client receives status code of 400
+    And the JSON should contain the key 'description' with value 'Incorrect car data provided'
