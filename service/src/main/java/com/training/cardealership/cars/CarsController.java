@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RequestMapping("/cars")
 @RestController
@@ -40,9 +41,10 @@ public class CarsController {
         return ResponseEntity.ok(Map.of("description", "Car updated"));
     }
 
-    @DeleteMapping("/admin/{brand}/{model}")
-    public ResponseEntity<Void> deleteCar(@PathVariable String brand, @PathVariable String model) {
+    @DeleteMapping(value = {"/admin", "/admin/{brand}", "/admin/{brand}/{model}"})
+    public ResponseEntity<Void> deleteCar(@PathVariable(required = false) String brand, @PathVariable(required = false) String model) {
         carsService.deleteCar(brand, model);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
 }

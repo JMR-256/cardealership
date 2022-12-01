@@ -1,7 +1,9 @@
 package com.training.cardealership.cars;
 
+import com.training.cardealership.enums.ExceptionsEnum;
 import com.training.cardealership.exceptions.CarExistsException;
 import com.training.cardealership.exceptions.EntityNotFoundException;
+import com.training.cardealership.exceptions.InvalidQueryException;
 import com.training.cardealership.validation.QueryValidator;
 import com.training.cardealership.validation.StringValidators;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +61,7 @@ public class CarsService {
     }
 
     public void updateCar(CarDTO carDTO) {
-        Car car = carsRepository.findByBrandIgnoreCaseAndModelIgnoreCase(carDTO.getBrand(), carDTO.getModel()).orElseThrow(EntityNotFoundException::new);
+        Car car = carsRepository.findByBrandIgnoreCaseAndModelIgnoreCase(carDTO.getBrand(), carDTO.getModel()).orElseThrow(() -> {throw new EntityNotFoundException(ExceptionsEnum.INVALID_CAR);});
 
         car.setColour(carDTO.getColour());
         car.setMileage(carDTO.getMileage());
@@ -82,7 +84,15 @@ public class CarsService {
     }
 
     public void deleteCar(String brand, String model) {
-        Optional<Car> foundCar = carsRepository.findByBrandIgnoreCaseAndModelIgnoreCase(brand, model);
-        foundCar.ifPresent(car -> carsRepository.delete(car));
+        if (!StringValidators.notEmpty.test(brand) || !StringValidators.notEmpty.test(model)) {
+            throw new InvalidQueryException(ExceptionsEnum.DELETE_ERROR);
+        }
+
+        Car foundCar = carsRepository.findByBrandIgnoreCaseAndModelIgnoreCase(brand, model).orElseThrow(() -> {
+            throw new EntityNotFoundException(ExceptionsEnum.DELETE_ERROR);
+        });
+
+        carsRepository.delete(foundCar);
+
     }
 }

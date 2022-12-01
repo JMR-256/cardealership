@@ -1,11 +1,15 @@
 package com.training.cardealership.exceptions;
 
-public class InvalidQueryException extends RuntimeException{
-    public InvalidQueryException() {
-        super("Query was invalid");
+import com.training.cardealership.enums.ExceptionsEnum;
+
+public class InvalidQueryException extends ServiceException {
+
+    public InvalidQueryException(ExceptionsEnum error) {
+        this(error, "Query parameter is invalid");;
     }
 
-    public InvalidQueryException(String queryParam) {
-        super(queryParam + " is not a valid query parameter");
+    public InvalidQueryException(ExceptionsEnum error, String msg) {
+        super(error, msg);
     }
+
 }

@@ -1,17 +1,16 @@
 package com.training.cardealership.exceptions;
 
+import com.training.cardealership.enums.ExceptionsEnum;
 import org.springframework.dao.DataRetrievalFailureException;
 
-public class EntityNotFoundException extends DataRetrievalFailureException {
+public class EntityNotFoundException extends ServiceException {
 
-    public EntityNotFoundException() {
-        this("The entity could not be found");
-    }
-    public EntityNotFoundException(String msg) {
-        super(msg);
+    public EntityNotFoundException(ExceptionsEnum error) {
+        this(error, "Entity not found");
     }
 
-    public EntityNotFoundException(String msg, Throwable cause) {
-        super(msg, cause);
+    public EntityNotFoundException(ExceptionsEnum error, String msg) {
+        super(error, msg);
     }
+
 }
