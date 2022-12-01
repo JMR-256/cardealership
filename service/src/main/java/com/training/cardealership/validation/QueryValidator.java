@@ -1,6 +1,7 @@
 package com.training.cardealership.validation;
 
 
+import com.training.cardealership.enums.ExceptionsEnum;
 import com.training.cardealership.exceptions.InvalidQueryException;
 
 import java.util.HashMap;
@@ -25,12 +26,12 @@ public class QueryValidator {
     public void validate(Map<String, String> queryParams) {
         queryParams.forEach((queryParam, value) -> {
             if (errorOnFieldMissingRule && !validationRules.containsKey(queryParam)) {
-                throw new InvalidQueryException(queryParam);
+                throw new InvalidQueryException(ExceptionsEnum.GET_ERROR);
             }
             if (validationRules.containsKey(queryParam)) {
                 validationRules.get(queryParam).forEach(stringPredicate -> {
                     if (!stringPredicate.test(value)) {
-                        throw new InvalidQueryException(stringPredicate.toString());
+                        throw new InvalidQueryException(ExceptionsEnum.GET_ERROR, stringPredicate.toString());
                     }
                 });
             }
