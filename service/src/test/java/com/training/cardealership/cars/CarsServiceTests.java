@@ -146,4 +146,19 @@ public class CarsServiceTests {
         Mockito.verify(carsRepository, times(1)).delete(exampleCar);
     }
 
+    @Test
+    void deleteCars_throwsException_if_carDoesNotExist() {
+        Mockito.when(carsRepository.findByBrandIgnoreCaseAndModelIgnoreCase(exampleCar.getBrand(), exampleCar.getModel())).thenReturn(Optional.empty());
+        Assertions.assertThrows(EntityNotFoundException.class, () -> carsService.deleteCar(exampleCar.getBrand(), exampleCar.getModel()));
+        Mockito.verify(carsRepository, times(0)).delete(any());
+    }
+
+    @Test
+    void deleteCars_throwsException_if_carIdNotProvided() {
+        Assertions.assertThrows(InvalidQueryException.class, () -> carsService.deleteCar(null, null));
+        Assertions.assertThrows(InvalidQueryException.class, () -> carsService.deleteCar("", ""));
+        Mockito.verify(carsRepository, times(0)).findByBrandIgnoreCaseAndModelIgnoreCase(any(), any());
+        Mockito.verify(carsRepository, times(0)).delete(any());
+    }
+
 }
