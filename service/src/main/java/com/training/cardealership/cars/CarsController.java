@@ -39,4 +39,10 @@ public class CarsController {
         carsService.updateCar(car);
         return ResponseEntity.ok(Map.of("description", "Car updated"));
     }
+
+    @DeleteMapping("/admin/{brand}/{model}")
+    public ResponseEntity<Void> deleteCar(@PathVariable String brand, @PathVariable String model) {
+        carsService.deleteCar(brand, model);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }

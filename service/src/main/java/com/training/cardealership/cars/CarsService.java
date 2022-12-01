@@ -6,10 +6,12 @@ import com.training.cardealership.validation.QueryValidator;
 import com.training.cardealership.validation.StringValidators;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -79,4 +81,8 @@ public class CarsService {
         return cars.stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 
+    public void deleteCar(String brand, String model) {
+        Optional<Car> foundCar = carsRepository.findByBrandIgnoreCaseAndModelIgnoreCase(brand, model);
+        foundCar.ifPresent(car -> carsRepository.delete(car));
+    }
 }

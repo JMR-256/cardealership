@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 
 import javax.validation.ConstraintViolationException;
 import java.util.HashMap;
@@ -113,6 +114,14 @@ public class CarsServiceTests {
     }
 
     @Test
+    void findCars_calls_repo_findByQuery_whenParamsNotEmpty() {
+        Mockito.when(carsRepository.findByQuery(eq("BMW"), any(), any(), any(), any(), any(), eq(Sort.by(Sort.Direction.ASC, "brand")))).thenReturn(List.of(exampleCar));
+        List<CarDTO> responseCars = carsService.getCars(Map.of("brand", "BMW"));
+        Assertions.assertEquals(List.of(exampleCarDto), responseCars);
+        Mockito.verify(carsRepository, times(1)).findByQuery(eq("BMW"), any(), any(), any(), any(), any(), eq(Sort.by(Sort.Direction.ASC, "brand")));
+    }
+
+    @Test
     void updateCars_throwsException_if_carDoesNotExist() {
         Mockito.when(carsRepository.findByBrandIgnoreCaseAndModelIgnoreCase(any(), any())).thenReturn(Optional.empty());
         Assertions.assertThrows(EntityNotFoundException.class, () -> carsService.updateCar(exampleCarDto));
@@ -131,10 +140,10 @@ public class CarsServiceTests {
     }
 
     @Test
-    void findCars_calls_repo_findByQuery_whenParamsNotEmpty() {
-        Mockito.when(carsRepository.findByQuery(eq("BMW"), any(), any(), any(), any(), any(), eq(Sort.by(Sort.Direction.ASC, "brand")))).thenReturn(List.of(exampleCar));
-        List<CarDTO> responseCars = carsService.getCars(Map.of("brand", "BMW"));
-        Assertions.assertEquals(List.of(exampleCarDto), responseCars);
-        Mockito.verify(carsRepository, times(1)).findByQuery(eq("BMW"), any(), any(), any(), any(), any(), eq(Sort.by(Sort.Direction.ASC, "brand")));
+    void deleteCars_deletesExistingCar() {
+        Mockito.when(carsRepository.findByBrandIgnoreCaseAndModelIgnoreCase(exampleCar.getBrand(), exampleCar.getModel())).thenReturn(Optional.of(exampleCar));
+        carsService.deleteCar(exampleCar.getBrand(), exampleCar.getModel());
+        Mockito.verify(carsRepository, times(1)).delete(exampleCar);
     }
+
 }
